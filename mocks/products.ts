@@ -65,12 +65,14 @@ export const mockProducts: Product[] = [
     categorySlug: 'smartphones',
     images: [
       'https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?auto=format&fit=crop&w=800&q=80',
     ],
     inStock: true,
     stockCount: 14,
     isBestseller: true,
     isNew: true,
     attributes: [
+      { name: { ru: 'Бренд', en: 'Brand' }, value: { ru: 'Apple', en: 'Apple' } },
       { name: { ru: 'Экран', en: 'Screen' }, value: { ru: '6.9" Super Retina XDR OLED 120Hz', en: '6.9" Super Retina XDR OLED 120Hz' } },
       { name: { ru: 'Процессор', en: 'Processor' }, value: { ru: 'Apple A18 Pro', en: 'Apple A18 Pro' } },
       { name: { ru: 'Память', en: 'Storage' }, value: { ru: '256 ГБ', en: '256 GB' } },
@@ -99,11 +101,13 @@ export const mockProducts: Product[] = [
     categorySlug: 'smartphones',
     images: [
       'https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1580910051074-3eb694886505?auto=format&fit=crop&w=800&q=80',
     ],
     inStock: true,
     stockCount: 8,
     isBestseller: true,
     attributes: [
+      { name: { ru: 'Бренд', en: 'Brand' }, value: { ru: 'Samsung', en: 'Samsung' } },
       { name: { ru: 'Экран', en: 'Screen' }, value: { ru: '6.8" Dynamic AMOLED 2X 120Hz', en: '6.8" Dynamic AMOLED 2X 120Hz' } },
       { name: { ru: 'Процессор', en: 'Processor' }, value: { ru: 'Snapdragon 8 Gen 3 for Galaxy', en: 'Snapdragon 8 Gen 3 for Galaxy' } },
       { name: { ru: 'Память', en: 'Storage' }, value: { ru: '512 ГБ', en: '512 GB' } },
@@ -132,12 +136,14 @@ export const mockProducts: Product[] = [
     categorySlug: 'laptops',
     images: [
       'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=800&q=80',
+      'https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?auto=format&fit=crop&w=800&q=80',
     ],
     inStock: true,
     stockCount: 5,
     isBestseller: true,
     isNew: true,
     attributes: [
+      { name: { ru: 'Бренд', en: 'Brand' }, value: { ru: 'Apple', en: 'Apple' } },
       { name: { ru: 'Экран', en: 'Screen' }, value: { ru: '14.2" Liquid Retina XDR 120Hz', en: '14.2" Liquid Retina XDR 120Hz' } },
       { name: { ru: 'Чип', en: 'Chip' }, value: { ru: 'Apple M3 Pro (11 CPU / 14 GPU)', en: 'Apple M3 Pro (11 CPU / 14 GPU)' } },
       { name: { ru: 'Память', en: 'RAM & SSD' }, value: { ru: '18 ГБ RAM / 512 ГБ SSD', en: '18 GB RAM / 512 GB SSD' } },
@@ -171,9 +177,9 @@ export const mockProducts: Product[] = [
     stockCount: 18,
     isBestseller: true,
     attributes: [
+      { name: { ru: 'Бренд', en: 'Brand' }, value: { ru: 'Sony', en: 'Sony' } },
       { name: { ru: 'Накопитель', en: 'Storage' }, value: { ru: '1 ТБ NVMe SSD', en: '1 TB NVMe SSD' } },
       { name: { ru: 'Разрешение', en: 'Resolution' }, value: { ru: 'До 4K 120Hz / 8K', en: 'Up to 4K 120Hz / 8K' } },
-      { name: { ru: 'Комплект', en: 'Included' }, value: { ru: 'Геймпад DualSense, кабель HDMI', en: 'DualSense Wireless Controller, HDMI cable' } },
     ],
     description: {
       ru: 'Новая компактная версия культовой консоли PS5 с увеличенным объемом памяти 1 ТБ.',
@@ -203,9 +209,9 @@ export const mockProducts: Product[] = [
     inStock: true,
     stockCount: 12,
     attributes: [
+      { name: { ru: 'Бренд', en: 'Brand' }, value: { ru: 'Sony', en: 'Sony' } },
       { name: { ru: 'Тип', en: 'Type' }, value: { ru: 'Беспроводные полноразмерные', en: 'Wireless over-ear' } },
       { name: { ru: 'Шумоподавление', en: 'ANC' }, value: { ru: 'Активное с 8 микрофонами', en: 'Active with 8 microphones' } },
-      { name: { ru: 'Автономность', en: 'Battery life' }, value: { ru: 'До 30 часов с ANC', en: 'Up to 30 hours with ANC' } },
     ],
     description: {
       ru: 'Беспроводные наушники с лучшим на рынке шумоподавлением и кристально чистым звучанием Hi-Res Audio.',
@@ -235,9 +241,9 @@ export const mockProducts: Product[] = [
     inStock: true,
     stockCount: 9,
     attributes: [
+      { name: { ru: 'Бренд', en: 'Brand' }, value: { ru: 'Apple', en: 'Apple' } },
       { name: { ru: 'Корпус', en: 'Case' }, value: { ru: '49 мм Аэрокосмический титан', en: '49mm Aerospace titanium' } },
       { name: { ru: 'Водонепроницаемость', en: 'Water resistance' }, value: { ru: 'До 100 метров (WR100)', en: 'Up to 100 meters (WR100)' } },
-      { name: { ru: 'Автономность', en: 'Battery life' }, value: { ru: 'До 72 часов в энергосбережении', en: 'Up to 72 hours in low power mode' } },
     ],
     description: {
       ru: 'Самые прочные и функциональные часы Apple, созданные для экстремальных нагрузок и спорта.',
@@ -267,9 +273,9 @@ export const mockProducts: Product[] = [
     inStock: true,
     stockCount: 7,
     attributes: [
+      { name: { ru: 'Бренд', en: 'Brand' }, value: { ru: 'Dyson', en: 'Dyson' } },
       { name: { ru: 'Мощность всасывания', en: 'Suction power' }, value: { ru: '240 аВт', en: '240 AW' } },
       { name: { ru: 'Время работы', en: 'Run time' }, value: { ru: 'До 60 минут', en: 'Up to 60 minutes' } },
-      { name: { ru: 'Фильтрация', en: 'Filtration' }, value: { ru: 'HEPA 99.99% до 0.3 микрон', en: 'HEPA 99.99% down to 0.3 microns' } },
     ],
     description: {
       ru: 'Мощный беспроводной пылесос с умной регулировкой мощности и лазерной подсветкой незаметной пыли.',
@@ -299,9 +305,9 @@ export const mockProducts: Product[] = [
     inStock: true,
     stockCount: 4,
     attributes: [
+      { name: { ru: 'Бренд', en: 'Brand' }, value: { ru: 'LG', en: 'LG' } },
       { name: { ru: 'Диагональ', en: 'Screen size' }, value: { ru: '55 дюймов (139 см)', en: '55 inches (139 cm)' } },
       { name: { ru: 'Панель', en: 'Panel' }, value: { ru: 'OLED evo 4K 120Hz', en: 'OLED evo 4K 120Hz' } },
-      { name: { ru: 'Звук', en: 'Audio' }, value: { ru: '40 Вт 2.2-канальный Dolby Atmos', en: '40W 2.2 channel Dolby Atmos' } },
     ],
     description: {
       ru: 'Идеальный чёрный цвет, бесконечная контрастность и поддержка современных игровых консолей 4K 120Hz G-Sync.',
@@ -331,9 +337,9 @@ export const mockProducts: Product[] = [
     inStock: true,
     stockCount: 6,
     attributes: [
+      { name: { ru: 'Бренд', en: 'Brand' }, value: { ru: 'ASUS', en: 'ASUS' } },
       { name: { ru: 'Процессор', en: 'Processor' }, value: { ru: 'Intel Core Ultra 9 185H', en: 'Intel Core Ultra 9 185H' } },
       { name: { ru: 'Видеокарта', en: 'Graphics' }, value: { ru: 'NVIDIA GeForce RTX 4070 8GB', en: 'NVIDIA GeForce RTX 4070 8GB' } },
-      { name: { ru: 'Экран', en: 'Display' }, value: { ru: '16" ROG Nebula OLED 240Hz', en: '16" ROG Nebula OLED 240Hz' } },
     ],
     description: {
       ru: 'Ультратонкий премиальный игровой ноутбук в алюминиевом шасси с великолепным OLED-экраном 240 Гц.',
@@ -363,13 +369,78 @@ export const mockProducts: Product[] = [
     inStock: true,
     stockCount: 15,
     attributes: [
+      { name: { ru: 'Бренд', en: 'Brand' }, value: { ru: 'Apple', en: 'Apple' } },
       { name: { ru: 'Чип', en: 'Chip' }, value: { ru: 'Apple M2 (8 CPU / 9 GPU)', en: 'Apple M2 (8 CPU / 9 GPU)' } },
-      { name: { ru: 'Экран', en: 'Display' }, value: { ru: '11" Liquid Retina с True Tone', en: '11" Liquid Retina with True Tone' } },
       { name: { ru: 'Память', en: 'Storage' }, value: { ru: '128 ГБ', en: '128 GB' } },
     ],
     description: {
       ru: 'Универсальный планшет для учебы, творчества и продуктивной работы на мощном процессоре Apple M2.',
       en: 'Versatile, powerful tablet driven by Apple M2 for creators and students alike.',
+    },
+  },
+  {
+    id: 'prod-11',
+    slug: 'xiaomi-14-ultra-512gb-black',
+    title: {
+      ru: 'Xiaomi 14 Ultra 512GB Leica Photography Edition',
+      en: 'Xiaomi 14 Ultra 512GB Leica Photography Edition',
+    },
+    subtitle: {
+      ru: 'Камера Leica 1-дюймовый сенсор, Snapdragon 8 Gen 3',
+      en: 'Leica 1-inch sensor camera, Snapdragon 8 Gen 3',
+    },
+    price: 13990000,
+    oldPrice: 15200000,
+    discountPercent: 8,
+    rating: 4.8,
+    reviewCount: 21,
+    categorySlug: 'smartphones',
+    images: [
+      'https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=800&q=80',
+    ],
+    inStock: true,
+    stockCount: 10,
+    attributes: [
+      { name: { ru: 'Бренд', en: 'Brand' }, value: { ru: 'Xiaomi', en: 'Xiaomi' } },
+      { name: { ru: 'Экран', en: 'Screen' }, value: { ru: '6.73" AMOLED 120Hz WQHD+', en: '6.73" AMOLED 120Hz WQHD+' } },
+      { name: { ru: 'Память', en: 'Storage' }, value: { ru: '512 ГБ', en: '512 GB' } },
+    ],
+    description: {
+      ru: 'Камерофон высшего класса с оптикой Leica Summilux и бесступенчатой регулировкой диафрагмы.',
+      en: 'Top-tier camera phone featuring Leica Summilux optics and step-less aperture.',
+    },
+  },
+  {
+    id: 'prod-12',
+    slug: 'apple-airpods-pro-2-usb-c',
+    title: {
+      ru: 'Apple AirPods Pro 2 (USB-C / MagSafe Case)',
+      en: 'Apple AirPods Pro 2 (USB-C / MagSafe Case)',
+    },
+    subtitle: {
+      ru: 'Адаптивное аудио, шумоподавление до 2x сильнее, защита IP54',
+      en: 'Adaptive Audio, 2x stronger ANC, IP54 dust and water resistance',
+    },
+    price: 3190000,
+    oldPrice: 3490000,
+    discountPercent: 9,
+    rating: 4.9,
+    reviewCount: 88,
+    categorySlug: 'audio',
+    images: [
+      'https://images.unsplash.com/photo-1600294037681-c80b4cb5b434?auto=format&fit=crop&w=800&q=80',
+    ],
+    inStock: true,
+    stockCount: 25,
+    isBestseller: true,
+    attributes: [
+      { name: { ru: 'Бренд', en: 'Brand' }, value: { ru: 'Apple', en: 'Apple' } },
+      { name: { ru: 'Тип', en: 'Type' }, value: { ru: 'Внутриканальные TWS', en: 'In-ear TWS' } },
+      { name: { ru: 'Шумоподавление', en: 'ANC' }, value: { ru: 'Адаптивное активное', en: 'Adaptive active' } },
+    ],
+    description: {
+      ru: 'Флагманские наушники Apple с поддержкой USB-C, адаптивным аудио и прозрачным режимом.',
+      en: 'Apple flagship in-ear earphones with USB-C connector and Adaptive Audio.',
     },
   },
 ];
