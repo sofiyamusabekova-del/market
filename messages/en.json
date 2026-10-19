@@ -1,0 +1,40 @@
+{
+  "common": {
+    "searchPlaceholder": "Search electronics, smartphones, laptops...",
+    "catalog": "Catalog",
+    "cart": "Cart",
+    "favorites": "Favorites",
+    "compare": "Compare",
+    "currency": "UZS",
+    "inStock": "In Stock",
+    "outOfStock": "Out of Stock",
+    "bestseller": "Bestseller",
+    "new": "New",
+    "addToCart": "Add to Cart",
+    "buyNow": "Buy with 1-Click",
+    "checkout": "Checkout",
+    "loading": "Loading...",
+    "emptyCart": "Your cart is empty",
+    "total": "Total",
+    "discount": "Discount",
+    "specs": "Specifications",
+    "reviews": "reviews"
+  },
+  "nav": {
+    "allCategories": "All Categories",
+    "smartphones": "Smartphones",
+    "laptops": "Laptops",
+    "appliances": "Appliances",
+    "audio": "Audio",
+    "gaming": "Gaming"
+  },
+  "footer": {
+    "tagline": "Premium electronics store with official warranty and express delivery across Uzbekistan.",
+    "buyerGuide": "Customer Care",
+    "delivery": "Delivery & Payment",
+    "warranty": "Warranty & Returns",
+    "contacts": "Contacts & Locations",
+    "privacy": "Privacy Policy",
+    "rights": "All rights reserved."
+  }
+}

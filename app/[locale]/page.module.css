@@ -1,0 +1,190 @@
+.bentoSection {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  grid-template-rows: auto auto;
+  gap: 1.25rem;
+  margin-bottom: 3.5rem;
+}
+
+.bentoCard {
+  background: var(--bg-card);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xl);
+  padding: 2rem;
+  position: relative;
+  overflow: hidden;
+  transition: border-color var(--transition-normal);
+}
+
+.bentoCard:hover {
+  border-color: var(--border-focus);
+}
+
+.bentoHero {
+  grid-column: 1 / 2;
+  grid-row: 1 / 3;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: radial-gradient(circle at 10% 20%, rgba(79, 70, 229, 0.18) 0%, rgba(11, 13, 19, 0) 60%),
+              radial-gradient(circle at 90% 80%, rgba(6, 182, 212, 0.12) 0%, rgba(11, 13, 19, 0) 50%),
+              var(--bg-card);
+}
+
+.heroBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.85rem;
+  border-radius: var(--radius-full);
+  background: rgba(99, 102, 241, 0.15);
+  border: 1px solid var(--border-accent);
+  color: var(--text-accent);
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-bottom: 1.25rem;
+  width: fit-content;
+}
+
+.heroTitle {
+  margin-bottom: 1rem;
+}
+
+.gradientText {
+  background: var(--accent-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.heroSubtitle {
+  font-size: 1.05rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  max-width: 580px;
+  margin-bottom: 2rem;
+}
+
+.heroActions {
+  display: flex;
+  gap: 1rem;
+}
+
+.bentoSub1,
+.bentoSub2 {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.subCardTag {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
+  margin-bottom: 0.75rem;
+}
+
+.subCardTitle {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.subCardPrice {
+  color: var(--accent-cyan);
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin-bottom: 0.75rem;
+}
+
+.subCardDesc {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.subCardLink {
+  color: var(--text-accent);
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-top: 0.5rem;
+  display: inline-flex;
+}
+
+.section {
+  margin-bottom: 4rem;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+.viewAll {
+  color: var(--text-accent);
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: opacity var(--transition-fast);
+}
+
+.viewAll:hover {
+  opacity: 0.8;
+}
+
+.categoriesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 1rem;
+}
+
+.categoryCard {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  transition: all var(--transition-fast);
+}
+
+.categoryCard:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--border-focus);
+  transform: translateY(-2px);
+}
+
+.categoryName {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.categoryCount {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.productsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+@media (max-width: 900px) {
+  .bentoSection {
+    grid-template-columns: 1fr;
+  }
+  .bentoHero {
+    grid-column: 1 / -1;
+    grid-row: auto;
+  }
+}
