@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import styles from './ProductCard.module.css';
 import { Product } from '@/types';
@@ -5,8 +7,9 @@ import { Locale } from '@/lib/i18n';
 import { Badge } from '@/components/ui/Badge';
 import { Price } from '@/components/ui/Price';
 import { Button } from '@/components/ui/Button';
-import { ShoppingCart, Star } from 'lucide-react';
+import { ShoppingCart, Star, Heart, SlidersHorizontal } from 'lucide-react';
 import Link from 'next/link';
+import { useStore } from '@/lib/store';
 
 interface ProductCardProps {
   product: Product;
@@ -21,6 +24,9 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 }) => {
   const title = product.title[locale] || product.title.ru;
   const subtitle = product.subtitle ? product.subtitle[locale] || product.subtitle.ru : '';
+  const { isFavorite, toggleFavorite, isInCompare, toggleCompare } = useStore();
+  const fav = isFavorite(product.slug);
+  const comp = isInCompare(product.slug);
 
   return (
     <div className={styles.card}>
@@ -33,6 +39,25 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           {product.isBestseller && (
             <Badge variant="bestseller">{locale === 'ru' ? 'Хит' : 'Hit'}</Badge>
           )}
+        </div>
+
+        <div className={styles.quickActions}>
+          <button
+            onClick={() => toggleFavorite(product.slug)}
+            className={`${styles.iconBtn} ${fav ? styles.iconBtnActive : ''}`}
+            title={locale === 'ru' ? 'В избранное' : 'Add to Wishlist'}
+            aria-label="Wishlist"
+          >
+            <Heart size={16} fill={fav ? '#ef4444' : 'none'} color={fav ? '#ef4444' : 'currentColor'} />
+          </button>
+          <button
+            onClick={() => toggleCompare(product.slug)}
+            className={`${styles.iconBtn} ${comp ? styles.iconBtnActive : ''}`}
+            title={locale === 'ru' ? 'Сравнить' : 'Compare'}
+            aria-label="Compare"
+          >
+            <SlidersHorizontal size={16} color={comp ? '#818cf8' : 'currentColor'} />
+          </button>
         </div>
 
         <Link href={`/${locale}/product/${product.slug}`} className={styles.imageLink}>

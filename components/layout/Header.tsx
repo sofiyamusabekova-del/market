@@ -1,21 +1,25 @@
+'use client';
+
 import React from 'react';
 import styles from './Header.module.css';
 import Link from 'next/link';
 import { Locale } from '@/lib/i18n';
 import { Search, ShoppingBag, Heart, SlidersHorizontal, Globe } from 'lucide-react';
+import { useStore } from '@/lib/store';
 
 interface HeaderProps {
   locale: Locale;
   cartCount?: number;
-  favoritesCount?: number;
 }
 
 export const Header: React.FC<HeaderProps> = ({
   locale,
   cartCount = 0,
-  favoritesCount = 0,
 }) => {
   const switchLocale = locale === 'ru' ? 'en' : 'ru';
+  const { favorites, compareList } = useStore();
+  const favoritesCount = favorites.length;
+  const compareCount = compareList.length;
 
   return (
     <header className={styles.header}>
@@ -50,6 +54,7 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Compare */}
           <Link href={`/${locale}/compare`} className={styles.actionBtn} title={locale === 'ru' ? 'Сравнение' : 'Compare'}>
             <SlidersHorizontal size={18} />
+            {compareCount > 0 && <span className={styles.badge}>{compareCount}</span>}
           </Link>
 
           {/* Favorites */}

@@ -6,6 +6,8 @@ export const metadata: Metadata = {
   description: 'Смартфоны, ноутбуки, телевизоры и бытовая техника с официальной гарантией и быстрой доставкой по Узбекистану.',
 };
 
+import { StoreProvider } from '@/lib/store';
+
 export default function RootLayout({
   children,
 }: {
@@ -13,7 +15,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ru">
-      <body>{children}</body>
+      <body>
+        <StoreProvider>{children}</StoreProvider>
+      </body>
     </html>
   );
 }

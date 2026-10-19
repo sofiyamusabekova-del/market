@@ -5,6 +5,7 @@ import { notFound } from 'next/navigation';
 import { Price } from '@/components/ui/Price';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
+import { ProductActions } from './ProductActions';
 import styles from './ProductPage.module.css';
 import Link from 'next/link';
 import {
@@ -124,22 +125,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
           </div>
 
           {/* Action Buttons */}
-          <div className={styles.actionGroup}>
-            <Button variant="primary" size="lg" fullWidth>
-              <ShoppingCart size={20} />
-              <span>{locale === 'ru' ? 'Добавить в корзину' : 'Add to Cart'}</span>
-            </Button>
-            <div className={styles.secondaryActions}>
-              <Button variant="secondary" size="md">
-                <Heart size={18} />
-                <span>{locale === 'ru' ? 'В избранное' : 'To Favorites'}</span>
-              </Button>
-              <Button variant="secondary" size="md">
-                <SlidersHorizontal size={18} />
-                <span>{locale === 'ru' ? 'Сравнить' : 'Compare'}</span>
-              </Button>
-            </div>
-          </div>
+          <ProductActions slug={product.slug} locale={locale} />
 
           {/* Delivery & Service Perks */}
           <div className={styles.servicePerks}>
