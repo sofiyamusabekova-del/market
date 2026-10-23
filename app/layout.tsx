@@ -1,12 +1,8 @@
 import './globals.css';
-import type { Metadata } from 'next';
-
-export const metadata: Metadata = {
-  title: 'VoltStore — Премиальный интернет-магазин электроники',
-  description: 'Смартфоны, ноутбуки, телевизоры и бытовая техника с официальной гарантией и быстрой доставкой по Узбекистану.',
-};
-
+import { metadata as siteMetadata } from '@/lib/metadata';
 import { StoreProvider } from '@/lib/store';
+
+export const metadata = siteMetadata;
 
 export default function RootLayout({
   children,
@@ -15,6 +11,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ru">
+      <head>
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+      </head>
       <body>
         <StoreProvider>{children}</StoreProvider>
       </body>

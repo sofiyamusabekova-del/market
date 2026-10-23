@@ -24,9 +24,17 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 }) => {
   const title = product.title[locale] || product.title.ru;
   const subtitle = product.subtitle ? product.subtitle[locale] || product.subtitle.ru : '';
-  const { isFavorite, toggleFavorite, isInCompare, toggleCompare } = useStore();
+  const { isFavorite, toggleFavorite, isInCompare, toggleCompare, addToCart } = useStore();
   const fav = isFavorite(product.slug);
   const comp = isInCompare(product.slug);
+
+  const handleAddToCart = () => {
+    if (onAddToCart) {
+      onAddToCart(product);
+    } else {
+      addToCart(product, 1);
+    }
+  };
 
   return (
     <div className={styles.card}>
@@ -98,7 +106,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           <Button
             variant="primary"
             size="sm"
-            onClick={() => onAddToCart && onAddToCart(product)}
+            onClick={handleAddToCart}
             aria-label={locale === 'ru' ? 'В корзину' : 'Add to cart'}
           >
             <ShoppingCart size={16} />

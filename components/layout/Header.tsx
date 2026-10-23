@@ -14,10 +14,11 @@ interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = ({
   locale,
-  cartCount = 0,
+  cartCount: propCartCount,
 }) => {
   const switchLocale = locale === 'ru' ? 'en' : 'ru';
-  const { favorites, compareList } = useStore();
+  const { favorites, compareList, cartCount: storeCartCount } = useStore();
+  const cartCount = propCartCount !== undefined ? propCartCount : storeCartCount;
   const favoritesCount = favorites.length;
   const compareCount = compareList.length;
 

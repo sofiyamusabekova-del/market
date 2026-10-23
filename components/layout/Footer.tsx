@@ -79,6 +79,7 @@ export const Footer: React.FC<FooterProps> = ({ locale }) => {
         <div className={styles.footerCol}>
           <h4 className={styles.footerColTitle}>{t.buyerGuide}</h4>
           <ul className={styles.linkList}>
+            <li><Link href={`/${locale}/about`}>{t.about || (locale === 'ru' ? 'О нас' : 'About Us')}</Link></li>
             <li><Link href={`/${locale}/delivery`}>{t.delivery}</Link></li>
             <li><Link href={`/${locale}/warranty`}>{t.warranty}</Link></li>
             <li><Link href={`/${locale}/contacts`}>{t.contacts}</Link></li>
