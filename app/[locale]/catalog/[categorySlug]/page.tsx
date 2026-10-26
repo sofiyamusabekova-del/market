@@ -1,6 +1,6 @@
 import React, { Suspense } from 'react';
 import { Locale } from '@/lib/i18n';
-import { mockCategories, mockProducts } from '@/mocks/products';
+import { getCategories, getProducts } from '@/lib/server-api';
 import { CatalogView } from '@/components/catalog/CatalogView';
 import { notFound } from 'next/navigation';
 
@@ -13,7 +13,12 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
   const locale: Locale = resolvedParams.locale === 'en' ? 'en' : 'ru';
   const categorySlug = resolvedParams.categorySlug;
 
-  const currentCategory = mockCategories.find((c) => c.slug === categorySlug);
+  const [categories, products] = await Promise.all([
+    getCategories(),
+    getProducts({ categorySlug }),
+  ]);
+
+  const currentCategory = categories.find((c) => c.slug === categorySlug);
   if (!currentCategory) {
     notFound();
   }
@@ -31,8 +36,8 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
 
       <Suspense fallback={<div style={{ padding: '2rem', color: 'var(--text-muted)' }}>Загрузка товаров...</div>}>
         <CatalogView
-          products={mockProducts}
-          categories={mockCategories}
+          products={products}
+          categories={categories}
           locale={locale}
           currentCategorySlug={categorySlug}
         />

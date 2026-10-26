@@ -1,6 +1,6 @@
 import React from 'react';
 import { Locale } from '@/lib/i18n';
-import { mockCategories, mockProducts } from '@/mocks/products';
+import { getCategories, getProducts } from '@/lib/server-api';
 import { ProductCard } from '@/components/ui/ProductCard';
 import { Button } from '@/components/ui/Button';
 import styles from './page.module.css';
@@ -14,8 +14,13 @@ interface HomePageProps {
 export default async function HomePage({ params }: HomePageProps) {
   const resolvedParams = await params;
   const locale: Locale = resolvedParams.locale === 'en' ? 'en' : 'ru';
-  const featuredProducts = mockProducts.slice(0, 4);
-  const bestsellers = mockProducts.filter((p) => p.isBestseller);
+  
+  const [categories, allProducts] = await Promise.all([
+    getCategories(),
+    getProducts(),
+  ]);
+
+  const bestsellers = allProducts.filter((p) => p.isBestseller);
 
   return (
     <div className="container" style={{ paddingTop: '2rem' }}>
@@ -97,7 +102,7 @@ export default async function HomePage({ params }: HomePageProps) {
         </div>
 
         <div className={styles.categoriesGrid}>
-          {mockCategories.map((cat) => (
+          {categories.map((cat) => (
             <Link
               key={cat.id}
               href={`/${locale}/catalog/${cat.slug}`}

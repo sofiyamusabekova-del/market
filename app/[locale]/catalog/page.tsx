@@ -1,6 +1,6 @@
 import React, { Suspense } from 'react';
 import { Locale } from '@/lib/i18n';
-import { mockCategories, mockProducts } from '@/mocks/products';
+import { getCategories, getProducts } from '@/lib/server-api';
 import { CatalogView } from '@/components/catalog/CatalogView';
 
 interface CatalogPageProps {
@@ -10,6 +10,11 @@ interface CatalogPageProps {
 export default async function CatalogPage({ params }: CatalogPageProps) {
   const resolvedParams = await params;
   const locale: Locale = resolvedParams.locale === 'en' ? 'en' : 'ru';
+
+  const [products, categories] = await Promise.all([
+    getProducts(),
+    getCategories(),
+  ]);
 
   return (
     <div className="container" style={{ paddingTop: '2rem', paddingBottom: '3rem' }}>
@@ -24,8 +29,8 @@ export default async function CatalogPage({ params }: CatalogPageProps) {
 
       <Suspense fallback={<div style={{ padding: '2rem', color: 'var(--text-muted)' }}>Загрузка каталога...</div>}>
         <CatalogView
-          products={mockProducts}
-          categories={mockCategories}
+          products={products}
+          categories={categories}
           locale={locale}
         />
       </Suspense>

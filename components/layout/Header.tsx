@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { Locale } from '@/lib/i18n';
 import { Search, ShoppingBag, Heart, SlidersHorizontal, Globe } from 'lucide-react';
 import { useStore } from '@/lib/store';
+import { AuthModal } from './AuthModal';
 
 interface HeaderProps {
   locale: Locale;
@@ -46,6 +47,9 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* Actions / Navigation */}
         <div className={styles.actions}>
+          {/* User Sign In (Google) */}
+          <AuthModal locale={locale} />
+
           {/* Language Switcher */}
           <Link href={`/${switchLocale}`} className={styles.actionBtn}>
             <Globe size={18} />

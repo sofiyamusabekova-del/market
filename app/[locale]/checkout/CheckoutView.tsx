@@ -35,7 +35,7 @@ export const CheckoutView: React.FC<CheckoutViewProps> = ({ locale }) => {
   const [city, setCity] = useState('Ташкент');
   const [address, setAddress] = useState('');
   const [deliveryMethod, setDeliveryMethod] = useState<'courier' | 'pickup' | 'express'>('courier');
-  const [paymentMethod, setPaymentMethod] = useState<'test_card' | 'cash'>('test_card');
+  const [paymentMethod, setPaymentMethod] = useState<'test_card' | 'payme' | 'click' | 'stripe' | 'cash'>('test_card');
   const [notes, setNotes] = useState('');
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
@@ -82,7 +82,7 @@ export const CheckoutView: React.FC<CheckoutViewProps> = ({ locale }) => {
     return Object.keys(errs).length === 0;
   };
 
-  const handleStartCheckout = (e: React.FormEvent) => {
+  const handleStartCheckout = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
 
@@ -93,7 +93,7 @@ export const CheckoutView: React.FC<CheckoutViewProps> = ({ locale }) => {
     }
   };
 
-  const executeOrderCreation = () => {
+  const executeOrderCreation = async () => {
     setIsProcessing(true);
     const customer: CustomerInfo = {
       fullName,
@@ -106,12 +106,55 @@ export const CheckoutView: React.FC<CheckoutViewProps> = ({ locale }) => {
       notes,
     };
 
-    setTimeout(() => {
-      const order = createOrder(customer);
-      setIsProcessing(false);
-      setShowTestModal(false);
-      router.push(`/${locale}/order/${order.orderNumber}`);
-    }, 1200);
+    try {
+      const response = await fetch('/api/orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          items: cart.map((i) => ({ productId: i.product.id, quantity: i.quantity })),
+          customer,
+        }),
+      });
+
+      const data = await response.json();
+      if (data.success && data.order) {
+        // Also save to client store so it appears in recent orders
+        const order = createOrder(customer);
+        setIsProcessing(false);
+        setShowTestModal(false);
+
+        // Check if redirect is required for online gateway (Payme, Click, Stripe)
+        if (['payme', 'click', 'stripe'].includes(paymentMethod)) {
+          const initRes = await fetch('/api/payments/init', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              orderNumber: data.order.orderNumber,
+              amount: finalOrderTotal,
+              currency: 'UZS',
+              provider: paymentMethod,
+              customer: { fullName, phone, email },
+              returnUrl: `${window.location.origin}/${locale}/order/${data.order.orderNumber}`,
+            }),
+          });
+          const initData = await initRes.json();
+          if (initData.redirectUrl) {
+            window.location.href = initData.redirectUrl;
+            return;
+          }
+        }
+
+        router.push(`/${locale}/order/${data.order.orderNumber || order.orderNumber}`);
+        return;
+      }
+    } catch {
+      // Fallback to local store order generation
+    }
+
+    const order = createOrder(customer);
+    setIsProcessing(false);
+    setShowTestModal(false);
+    router.push(`/${locale}/order/${order.orderNumber}`);
   };
 
   return (
@@ -308,14 +351,68 @@ export const CheckoutView: React.FC<CheckoutViewProps> = ({ locale }) => {
                   </div>
                   <div>
                     <div className={styles.optionLabel}>
-                      {locale === 'ru' ? 'Онлайн-оплата картой (Тестовый режим)' : 'Online Card Payment (Test Mode)'}
+                      {locale === 'ru' ? 'Онлайн-карта (Тестовый шлюз)' : 'Online Card (Demo Sandbox)'}
                     </div>
                     <div className={styles.optionDesc}>
-                      {locale === 'ru' ? 'Uzcard, Humo, Visa, Mastercard (без реальных списаний)' : 'Uzcard, Humo, Visa, Mastercard (simulation)'}
+                      {locale === 'ru' ? 'Мгновенная симуляция с чеком и вебхуком (Uzcard / Humo / Visa)' : 'Instant payment simulation with receipt'}
                     </div>
                   </div>
                 </div>
                 <CreditCard size={20} color="var(--accent-cyan)" />
+              </div>
+
+              <div
+                className={`${styles.optionCard} ${paymentMethod === 'payme' ? styles.optionCardActive : ''}`}
+                onClick={() => setPaymentMethod('payme')}
+              >
+                <div className={styles.optionLeft}>
+                  <div className={styles.radioCircle}>
+                    {paymentMethod === 'payme' && <div className={styles.radioDot} />}
+                  </div>
+                  <div>
+                    <div className={styles.optionLabel}>Payme</div>
+                    <div className={styles.optionDesc}>
+                      {locale === 'ru' ? 'Оплата через приложение Payme или карты Uzcard / Humo' : 'Pay via Payme app or Uzcard / Humo'}
+                    </div>
+                  </div>
+                </div>
+                <span style={{ fontSize: '0.85rem', fontWeight: 800, color: '#00cccc' }}>PAYME</span>
+              </div>
+
+              <div
+                className={`${styles.optionCard} ${paymentMethod === 'click' ? styles.optionCardActive : ''}`}
+                onClick={() => setPaymentMethod('click')}
+              >
+                <div className={styles.optionLeft}>
+                  <div className={styles.radioCircle}>
+                    {paymentMethod === 'click' && <div className={styles.radioDot} />}
+                  </div>
+                  <div>
+                    <div className={styles.optionLabel}>Click Up</div>
+                    <div className={styles.optionDesc}>
+                      {locale === 'ru' ? 'Оплата через Click Evolution, USSD или QR-код' : 'Pay via Click Evolution or QR'}
+                    </div>
+                  </div>
+                </div>
+                <span style={{ fontSize: '0.85rem', fontWeight: 800, color: '#0070ba' }}>CLICK</span>
+              </div>
+
+              <div
+                className={`${styles.optionCard} ${paymentMethod === 'stripe' ? styles.optionCardActive : ''}`}
+                onClick={() => setPaymentMethod('stripe')}
+              >
+                <div className={styles.optionLeft}>
+                  <div className={styles.radioCircle}>
+                    {paymentMethod === 'stripe' && <div className={styles.radioDot} />}
+                  </div>
+                  <div>
+                    <div className={styles.optionLabel}>Stripe / International Cards</div>
+                    <div className={styles.optionDesc}>
+                      {locale === 'ru' ? 'Международные карты Visa, Mastercard, Apple Pay' : 'Global Visa, Mastercard, Apple Pay'}
+                    </div>
+                  </div>
+                </div>
+                <span style={{ fontSize: '0.85rem', fontWeight: 800, color: '#6366f1' }}>STRIPE</span>
               </div>
 
               <div

@@ -22,7 +22,7 @@ export interface CustomerInfo {
   city: string;
   address: string;
   deliveryMethod: 'courier' | 'pickup' | 'express';
-  paymentMethod: 'test_card' | 'cash';
+  paymentMethod: 'test_card' | 'payme' | 'click' | 'stripe' | 'cash';
   notes?: string;
 }
 

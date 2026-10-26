@@ -1,6 +1,6 @@
 import React from 'react';
 import { Locale } from '@/lib/i18n';
-import { mockProducts } from '@/mocks/products';
+import { getProductBySlug } from '@/lib/server-api';
 import { notFound } from 'next/navigation';
 import { Price } from '@/components/ui/Price';
 import { Badge } from '@/components/ui/Badge';
@@ -29,7 +29,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
   const locale: Locale = resolvedParams.locale === 'en' ? 'en' : 'ru';
   const slug = resolvedParams.slug;
 
-  const product = mockProducts.find((p) => p.slug === slug);
+  const product = await getProductBySlug(slug);
   if (!product) {
     notFound();
   }
