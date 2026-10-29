@@ -1,3 +1,4 @@
+
 import { prisma } from './prisma';
 import { CustomerInfo, Order, OrderItem } from './store';
 
@@ -36,7 +37,7 @@ export async function createServerOrder(input: ServerOrderInput): Promise<{
     for (const item of items) {
       const prod = mockProducts.find((p) => p.id === item.productId);
       if (!prod) continue;
-      const verifiedPrice = prod.price; // Server verified price!
+      const verifiedPrice = prod.price;
       subtotal += verifiedPrice * item.quantity;
       orderItems.push({
         id: prod.id,
@@ -61,7 +62,7 @@ export async function createServerOrder(input: ServerOrderInput): Promise<{
       discount: 0,
       deliveryFee,
       total,
-      status: customer.paymentMethod === 'test_card' ? 'paid' : 'pending',
+      status: 'pending',
     };
 
     return { success: true, order: mockCreatedOrder };
@@ -131,7 +132,7 @@ export async function createServerOrder(input: ServerOrderInput): Promise<{
         discount: 0,
         deliveryFee,
         total,
-        status: customer.paymentMethod === 'test_card' ? 'PAID' : 'PENDING',
+        status: 'PENDING',
         notes: customer.notes || undefined,
         items: {
           create: verifiedOrderItems,
