@@ -1,26 +1,124 @@
+
 import { NextRequest, NextResponse } from 'next/server';
-import { getPaymentProvider, PaymentGatewayType } from '@/lib/payment';
+import { prisma } from '@/lib/prisma';
+import { getPaymentProvider } from '@/lib/payment';
+
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { orderNumber, amount, currency = 'UZS', provider: providerName = 'test', customer, returnUrl } = body;
+    const orderNumber = body?.orderNumber;
 
-    if (!orderNumber || !amount) {
-      return NextResponse.json({ success: false, error: 'orderNumber and amount are required' }, { status: 400 });
+    if (
+      typeof orderNumber !== 'string' ||
+      !/^VLT-\d{8}-\d{4}$/.test(orderNumber)
+    ) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Invalid order number',
+        },
+        { status: 400 }
+      );
     }
 
-    const provider = getPaymentProvider(providerName as PaymentGatewayType);
-    const result = await provider.initializePayment({
-      orderNumber,
-      amount,
-      currency,
-      customer: customer || { fullName: 'Customer', phone: '' },
-      returnUrl: returnUrl || `http://localhost:3000/order/${orderNumber}`,
+    if (!prisma) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Database is unavailable',
+        },
+        { status: 503 }
+      );
+    }
+
+    const order = await prisma.order.findUnique({
+      where: { orderNumber },
     });
 
-    return NextResponse.json(result);
-  } catch (err: any) {
-    return NextResponse.json({ success: false, error: err.message }, { status: 500 });
+    if (!order) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Order not found',
+        },
+        { status: 404 }
+      );
+    }
+
+    if (order.paymentMethod !== 'stripe') {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Stripe is not selected for this order',
+        },
+        { status: 400 }
+      );
+    }
+
+    if (order.status !== 'PENDING') {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Order is not awaiting payment',
+        },
+        { status: 409 }
+      );
+    }
+
+    if (
+      !Number.isSafeInteger(order.total) ||
+      order.total <= 0
+    ) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Invalid order total',
+        },
+        { status: 400 }
+      );
+    }
+
+    const provider = getPaymentProvider('stripe');
+
+    const result = await provider.initializePayment({
+      orderNumber: order.orderNumber,
+      amount: order.total,
+      currency: 'UZS',
+      customer: {
+        fullName: order.customerName,
+        phone: order.customerPhone,
+        email: order.customerEmail || undefined,
+      },
+      returnUrl: '',
+    });
+
+    if (!result.success || !result.redirectUrl) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: result.error || 'Unable to initialize Stripe Checkout',
+        },
+        { status: 502 }
+      );
+    }
+
+    return NextResponse.json({
+      success: true,
+      paymentId: result.paymentId,
+      redirectUrl: result.redirectUrl,
+    });
+  } catch (error) {
+    console.error('Payment initialization error:', error);
+
+    return NextResponse.json(
+      {
+        success: false,
+        error: 'Unable to initialize payment',
+      },
+      { status: 500 }
+    );
   }
 }
