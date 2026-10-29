@@ -1,55 +1,114 @@
+
 import { NextRequest, NextResponse } from 'next/server';
-import { getPaymentProvider, processPaymentEvent, PaymentGatewayType } from '@/lib/payment';
+import {
+  getPaymentProvider,
+  processPaymentEvent,
+} from '@/lib/payment';
+
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
 
 export async function POST(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const providerName = (searchParams.get('provider') || 'test') as PaymentGatewayType;
-    const signature = request.headers.get('authorization') || request.headers.get('stripe-signature') || undefined;
+    const providerName = searchParams.get('provider');
 
-    let payload: any;
-    try {
-      payload = await request.json();
-    } catch {
-      payload = {};
+    // Only Stripe is enabled on this public webhook.
+    // Other providers need their own authenticated handlers.
+    if (providerName !== 'stripe') {
+      return NextResponse.json(
+        { success: false, error: 'Unsupported payment provider' },
+        { status: 403 }
+      );
     }
 
-    const provider = getPaymentProvider(providerName);
-    const verification = await provider.verifyWebhook(payload, signature);
+    const signature = request.headers.get('stripe-signature');
+
+    if (!signature) {
+      return NextResponse.json(
+        { success: false, error: 'Missing Stripe signature' },
+        { status: 400 }
+      );
+    }
+
+    // Stripe signatures must be checked against the exact raw body.
+    const rawBody = await request.text();
+
+    const provider = getPaymentProvider('stripe');
+    const verification = await provider.verifyWebhook(
+      rawBody,
+      signature
+    );
 
     if (!verification.isValid) {
-      return NextResponse.json({ success: false, error: verification.error || 'Invalid signature' }, { status: 400 });
+      console.error('Stripe webhook verification failed');
+
+      return NextResponse.json(
+        {
+          success: false,
+          error: verification.error || 'Invalid Stripe signature',
+        },
+        { status: 400 }
+      );
     }
 
+    // Ignore other valid Stripe events.
+    // Only paid Checkout Sessions update orders.
     if (!verification.orderNumber) {
-      return NextResponse.json({ success: false, error: 'Order number missing in webhook payload' }, { status: 400 });
+      return NextResponse.json({
+        success: true,
+        ignored: true,
+      });
+    }
+
+    if (
+      verification.status !== 'SUCCESS' ||
+      !verification.transactionId ||
+      verification.amount === undefined ||
+      verification.currency?.toLowerCase() !== 'uzs'
+    ) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Invalid Stripe payment details',
+        },
+        { status: 400 }
+      );
     }
 
     const result = await processPaymentEvent({
       orderNumber: verification.orderNumber,
       transactionId: verification.transactionId,
-      provider: providerName,
-      status: verification.status || 'SUCCESS',
+      provider: 'stripe',
+      amount: verification.amount,
+      status: 'SUCCESS',
     });
 
     if (!result.success) {
-      return NextResponse.json({ success: false, error: result.error }, { status: 422 });
-    }
+      console.error('Stripe payment processing failed:', result.error);
 
-    // Payme and standard protocols return specific ack format
-    if (providerName === 'payme') {
-      return NextResponse.json({
-        result: {
-          state: 2,
-          perform_time: Date.now(),
-          transaction: verification.transactionId,
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Unable to process Stripe payment',
         },
-      });
+        { status: 422 }
+      );
     }
 
-    return NextResponse.json({ success: true, processed: true });
-  } catch (error: any) {
-    console.error('Webhook error:', error);
-    return NextResponse.json({ success: false, error: error.message || 'Internal webhook error' }, { status: 500 });
+    return NextResponse.json({
+      success: true,
+      processed: true,
+    });
+  } catch (error) {
+    console.error('Stripe webhook error:', error);
+
+    return NextResponse.json(
+      {
+        success: false,
+        error: 'Internal webhook error',
+      },
+      { status: 500 }
+    );
   }
 }
