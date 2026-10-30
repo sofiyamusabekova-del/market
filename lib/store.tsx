@@ -57,7 +57,9 @@ interface StoreContextType {
   clearCart: () => void;
   createOrder: (customer: CustomerInfo) => Order;
   getOrder: (orderNumber: string) => Order | null;
+  updateOrderStatus: (orderNumber: string, status: 'pending' | 'processing' | 'paid' | 'delivered') => void;
   orders: Order[];
+  mounted: boolean;
 }
 
 const StoreContext = createContext<StoreContextType | undefined>(undefined);
@@ -232,6 +234,16 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     return newOrder;
   };
 
+  const updateOrderStatus = (orderNumber: string, status: 'pending' | 'processing' | 'paid' | 'delivered') => {
+    setOrders((prev) => {
+      const next = prev.map((o) => (o.orderNumber === orderNumber ? { ...o, status } : o));
+      try {
+        localStorage.setItem(ORDERS_KEY, JSON.stringify(next));
+      } catch {}
+      return next;
+    });
+  };
+
   const getOrder = (orderNumber: string): Order | null => {
     const found = orders.find((o) => o.orderNumber === orderNumber);
     if (found) return found;
@@ -277,7 +289,9 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         clearCart,
         createOrder,
         getOrder,
+        updateOrderStatus,
         orders: mounted ? orders : [],
+        mounted,
       }}
     >
       {children}

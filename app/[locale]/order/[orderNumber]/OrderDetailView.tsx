@@ -19,14 +19,51 @@ import {
   ArrowRight,
 } from 'lucide-react';
 
+import { useSearchParams } from 'next/navigation';
+
 interface OrderDetailViewProps {
   orderNumber: string;
   locale: Locale;
 }
 
 export const OrderDetailView: React.FC<OrderDetailViewProps> = ({ orderNumber, locale }) => {
-  const { getOrder } = useStore();
+  const { getOrder, updateOrderStatus, mounted } = useStore();
+  const searchParams = useSearchParams();
+  const paymentStatus = searchParams?.get('payment_status');
+  const sessionId = searchParams?.get('session_id');
+
   const order = getOrder(orderNumber);
+
+  React.useEffect(() => {
+    if (paymentStatus === 'success' && order && order.status !== 'paid') {
+      updateOrderStatus(orderNumber, 'paid');
+
+      // Sync with server if database order exists
+      fetch('/api/payments/webhook', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          provider: 'stripe',
+          orderNumber,
+          transactionId: sessionId || `stripe_${orderNumber}`,
+          status: 'SUCCESS',
+        }),
+      }).catch(() => {});
+    }
+  }, [paymentStatus, sessionId, orderNumber, order, updateOrderStatus]);
+
+  if (!mounted) {
+    return (
+      <div className={`container ${styles.orderContainer}`}>
+        <div className={styles.statusHeaderCard} style={{ opacity: 0.6 }}>
+          <Clock size={48} color="var(--accent-cyan)" />
+          <h1 className={styles.orderHeading}>
+            {locale === 'ru' ? 'Загрузка данных заказа...' : 'Loading order details...'}
+          </h1>
+        </div>
+      </div>
+    );
+  }
 
   if (!order) {
     return (
@@ -103,7 +140,11 @@ export const OrderDetailView: React.FC<OrderDetailViewProps> = ({ orderNumber, l
               </span>
             </div>
             <span className={styles.stepSubtitle}>
-              {isPaid ? (locale === 'ru' ? 'Тестовая транзакция' : 'Test transaction') : (locale === 'ru' ? 'При получении' : 'On delivery')}
+              {isPaid
+                ? (locale === 'ru' ? 'Оплачено картой онлайн' : 'Paid online via Card')
+                : (order.customer.paymentMethod === 'cash'
+                    ? (locale === 'ru' ? 'При получении' : 'On delivery')
+                    : (locale === 'ru' ? 'Ожидает оплаты' : 'Pending payment'))}
             </span>
           </div>
 

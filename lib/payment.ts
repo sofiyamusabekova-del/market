@@ -16,7 +16,7 @@ export interface PaymentInitializationParams {
 
 export interface PaymentInitResult {
   success: boolean;
-  paymentId: string;
+  paymentId?: string;
   redirectUrl?: string;
   confirmationToken?: string;
   error?: string;
@@ -174,12 +174,60 @@ export class StripePaymentProvider implements IPaymentProvider {
       return new TestPaymentProvider().initializePayment(params);
     }
 
-    // In full Stripe integration, this initializes checkout session or payment intent
-    return {
-      success: true,
-      paymentId: `stripe_mock_${params.orderNumber}`,
-      redirectUrl: `${params.returnUrl}?payment_status=success`,
-    };
+    try {
+      // UZS to USD conversion for Stripe Checkout (approx 1 USD = 12,800 UZS)
+      // Stripe requires amount in cents (e.g. 1500 = $15.00)
+      const rawCents = params.currency === 'UZS'
+        ? Math.max(100, Math.round((params.amount / 12800) * 100))
+        : Math.round(params.amount * 100);
+
+      const searchParams = new URLSearchParams({
+        'line_items[0][price_data][currency]': 'usd',
+        'line_items[0][price_data][product_data][name]': `Заказ VOLT ${params.orderNumber}`,
+        'line_items[0][price_data][product_data][description]': `Оплата заказа ${params.orderNumber} в магазине VoltStore`,
+        'line_items[0][price_data][unit_amount]': String(rawCents),
+        'line_items[0][quantity]': '1',
+        'mode': 'payment',
+        'success_url': `${params.returnUrl}?payment_status=success&session_id={CHECKOUT_SESSION_ID}`,
+        'cancel_url': `${params.returnUrl}?payment_status=cancelled`,
+        'metadata[orderNumber]': params.orderNumber,
+      });
+
+      if (params.customer?.email) {
+        searchParams.append('customer_email', params.customer.email);
+      }
+
+      const res = await fetch('https://api.stripe.com/v1/checkout/sessions', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${stripeKey}`,
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: searchParams.toString(),
+      });
+
+      const session = await res.json();
+
+      if (!res.ok || !session.url) {
+        console.error('Stripe Checkout creation failed:', session);
+        return {
+          success: false,
+          error: session?.error?.message || 'Failed to initialize Stripe checkout session',
+        };
+      }
+
+      return {
+        success: true,
+        paymentId: session.id,
+        redirectUrl: session.url,
+      };
+    } catch (err: any) {
+      console.error('Stripe initialization error:', err);
+      return {
+        success: false,
+        error: err.message || 'Error communicating with Stripe API',
+      };
+    }
   }
 
   async verifyWebhook(payload: any, signature?: string): Promise<WebhookVerificationResult> {
@@ -187,7 +235,7 @@ export class StripePaymentProvider implements IPaymentProvider {
       isValid: true,
       orderNumber: payload?.data?.object?.metadata?.orderNumber,
       transactionId: payload?.data?.object?.id,
-      status: payload?.type === 'payment_intent.succeeded' ? 'SUCCESS' : 'FAILED',
+      status: payload?.type === 'checkout.session.completed' || payload?.type === 'payment_intent.succeeded' ? 'SUCCESS' : 'FAILED',
     };
   }
 }
